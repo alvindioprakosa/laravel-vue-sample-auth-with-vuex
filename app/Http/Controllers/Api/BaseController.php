@@ -8,28 +8,36 @@ use Illuminate\Http\JsonResponse;
 class BaseController extends Controller
 {
     /**
-     * Success response method.
+     * Send a successful response.
+     *
+     * @param mixed|null $result
+     * @param string $message
+     * @param int $code
+     * @return JsonResponse
      */
     public function sendResponse($result = null, string $message = '', int $code = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data'    => $result ?? null, // Pastikan `null` jika kosong
+            'data'    => $result ?? null,
             'message' => $message,
         ], $code);
     }
 
     /**
-     * Return error response.
+     * Send an error response.
+     *
+     * @param string $error
+     * @param array $errorMessages
+     * @param int $code
+     * @return JsonResponse
      */
     public function sendError(string $error, array $errorMessages = [], int $code = 400): JsonResponse
     {
-        $response = [
+        return response()->json([
             'success' => false,
             'message' => $error,
-            'data'    => !empty($errorMessages) ? $errorMessages : null, // Pastikan `null` jika kosong
-        ];
-
-        return response()->json($response, $code);
+            'data'    => !empty($errorMessages) ? $errorMessages : null,
+        ], $code);
     }
 }
