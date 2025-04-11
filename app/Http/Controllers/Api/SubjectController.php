@@ -10,12 +10,15 @@ use Illuminate\Database\QueryException;
 class SubjectController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * Display a paginated list of subjects.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
         try {
-            $subjects = Subject::paginate(10); // Gunakan pagination
+            // Ambil data subjects dengan pagination
+            $subjects = Subject::paginate(10);
 
             if ($subjects->isEmpty()) {
                 return $this->sendResponse([], 'No subjects found.');
@@ -23,7 +26,11 @@ class SubjectController extends BaseController
 
             return $this->sendResponse($subjects, 'Subjects retrieved successfully.');
         } catch (QueryException $e) {
-            return $this->sendError('Failed to fetch subjects.', ['error' => $e->getMessage()], 500);
+            return $this->sendError(
+                'Failed to fetch subjects.',
+                ['error' => $e->getMessage()],
+                500
+            );
         }
     }
 }
