@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 class BaseController extends Controller
 {
     /**
-     * Send a successful response.
+     * Kirim response sukses.
      *
      * @param mixed|null $result
      * @param string $message
@@ -19,13 +19,13 @@ class BaseController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => $result ?? null,
+            'data'    => $result,
             'message' => $message,
         ], $code);
     }
 
     /**
-     * Send an error response.
+     * Kirim response error.
      *
      * @param string $error
      * @param array $errorMessages
@@ -34,10 +34,15 @@ class BaseController extends Controller
      */
     public function sendError(string $error, array $errorMessages = [], int $code = 400): JsonResponse
     {
-        return response()->json([
+        $response = [
             'success' => false,
             'message' => $error,
-            'data'    => !empty($errorMessages) ? $errorMessages : null,
-        ], $code);
+        ];
+
+        if (!empty($errorMessages)) {
+            $response['data'] = $errorMessages;
+        }
+
+        return response()->json($response, $code);
     }
 }
