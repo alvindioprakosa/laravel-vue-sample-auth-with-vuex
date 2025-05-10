@@ -11,11 +11,11 @@ use App\Models\User;
 class AuthController extends Controller
 {
     /**
-     * Handle user login and issue access token
+     * Login user dan kembalikan token akses
      */
     public function login(Request $request)
     {
-        // Validate the request
+        // Validasi input
         $validator = Validator::make($request->all(), [
             'email'    => 'required|email',
             'password' => 'required|min:6',
@@ -28,16 +28,16 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Attempt login
+        // Coba login
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
 
-            // Generate access token
+            // Buat token akses
             $token = $user->createToken('MyApp')->accessToken;
 
             return response()->json([
                 'success' => true,
-                'message' => 'User logged in successfully.',
+                'message' => 'Login berhasil.',
                 'token'   => $token,
                 'user'    => [
                     'id'    => $user->id,
@@ -49,12 +49,12 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => false,
-            'error'   => 'Unauthorized'
+            'error'   => 'Email atau password salah.'
         ], 401);
     }
 
     /**
-     * Logout user (revoke access token)
+     * Logout user dan revoke token
      */
     public function logout(Request $request)
     {
@@ -63,13 +63,24 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully logged out.'
+                'message' => 'Logout berhasil.'
             ], 200);
         }
 
         return response()->json([
             'success' => false,
-            'error'   => 'User not authenticated.'
+            'error'   => 'Tidak terautentikasi.'
         ], 401);
+    }
+
+    /**
+     * Mendapatkan user yang sedang login
+     */
+    public function me(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'user'    => $request->user()
+        ], 200);
     }
 }
